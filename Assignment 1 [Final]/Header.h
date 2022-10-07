@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <time.h>
+#include "linked_list.h"
 using namespace cv;
 using namespace std;
 
@@ -199,8 +200,18 @@ void task1(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester
 }
 
 
-void task2() {
-	string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Original Images\\IMD002.bmp";
+void task2AndTask3(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Original Images\\IMD017.bmp") {
+
+
+	//NOTE: Keep the FIle name for Original Images and Ground Trusths Same for correct Value of DICE COEFFICIENT // 
+
+	string gndPath = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Ground Truths\\IMD017_lesion.bmp";
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////328//144////////////////////////////////////////////////////////////////////////////////////////////////
+	// TASK2 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	cv::Mat img = cv::imread(path);
 	namedWindow("First OpenCV Application", WINDOW_AUTOSIZE);
 	cv::imshow("First OpenCV Application", img);
@@ -214,7 +225,7 @@ void task2() {
 	{
 		image[i] = new int[img.cols] {0};
 	}
-
+	//
 	for (; k1 != cul1 || k2 != cul2; )
 	{
 		c1 = 0; c2 = 0; cul1 = 0; cul2 = 0;
@@ -305,13 +316,97 @@ void task2() {
 				img.at<Vec3b>(i, j).val[1] = 255;
 				img.at<Vec3b>(i, j).val[2] = 255;
 			}
-			
+
+
+
 
 
 			//cout << image[i][j]<<" ";
 		}
 		//cout << endl<<endl;
 	}
+
+	int jst = 0, jEnd = 0;
+	bool isStart = true;
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < img.cols; j++)
+		{
+			int curr1 = (img.at<Vec3b>(i, j).val[0] + img.at<Vec3b>(i, j).val[1] + img.at<Vec3b>(i, j).val[2]) / 3;
+			int prev1 = (img.at<Vec3b>(i, j - 1).val[0]);
+			int next1 = (img.at<Vec3b>(i, j + 1).val[0]);
+
+			if (curr1 == 255 && prev1 == 0)
+			{
+
+				jEnd = j;
+
+			}
+			else if (curr1 == 255 && next1 == 0 && isStart)
+			{
+
+				jst = j;
+				isStart = false;
+
+			}
+
+
+
+
+		}
+
+		for (int j = img.cols-1; j > 0 ; j--)
+		{
+			int curr1 = (img.at<Vec3b>(i, j).val[0] + img.at<Vec3b>(i, j).val[1] + img.at<Vec3b>(i, j).val[2]) / 3;
+			int prev1 = (img.at<Vec3b>(i, j - 1).val[0]);
+			int next1 = (img.at<Vec3b>(i, j + 1).val[0]);
+
+			if (curr1 == 0 && next1 == 0)
+			{
+
+				jEnd = j;
+				break;
+
+			}
+			
+
+
+
+
+		}
+
+	}
+
+	cout << jst << "  " << jEnd;
+
+	for (int i = 0; i < img.rows; i++)
+	{
+		for (int j = 0; j <= jst; j++)
+		{
+
+
+			img.at<Vec3b>(i, j).val[0] = 0;
+			img.at<Vec3b>(i, j).val[1] = 0;
+			img.at<Vec3b>(i, j).val[2] = 0;
+
+
+		}
+
+		for (int j = jEnd; j <img.cols ; j++)
+		{
+
+
+			img.at<Vec3b>(i, j).val[0] = 0;
+			img.at<Vec3b>(i, j).val[1] = 0;
+			img.at<Vec3b>(i, j).val[2] = 0;
+
+
+		}
+
+	}
+
+
 
 
 
@@ -320,7 +415,10 @@ void task2() {
 
 	int tp = 0, fp = 0, fn = 0;
 
-	string gndPath = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Ground Truths\\IMD002_lesion.bmp";
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//TASK3// DICE COEFFICIENT ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	cv::Mat gnd = imread(gndPath);
 
 	for (int i = 0; i < gnd.rows; i++)
@@ -328,19 +426,19 @@ void task2() {
 
 		for (int j = 0; j < gnd.cols; j++)
 		{
-			int v1 = gnd.at<Vec3b>(i, j).val[0], v2 = img.at<Vec3b>(i, j).val[0];
+			int imgVal = img.at<Vec3b>(i, j).val[0], gndVal = gnd.at<Vec3b>(i, j).val[0];
 
-			if (v1 == v2 && v1 == 255)
+			if (imgVal == gndVal && imgVal == 255)
 			{
 				tp++;
 			}
-			if (v1 == 0 && v2 == 255)
+			if (imgVal == 255 && gndVal == 0)
 			{
 				fp++;
 
 
 			}
-			if (v1 == 255)
+			if (imgVal == 0 && gndVal == 255)
 			{
 				fn++;
 			}
@@ -354,7 +452,8 @@ void task2() {
 
 	float diceCoff = (num / den);
 
-	cout << "\n\n Dice COffencient: " << diceCoff << "   " << tp << "   " << fp << "   " << fn;
+	cout << "\n\n Dice COffencient: " << diceCoff;
+	//<< "   " << tp << "   " << fp << "   " << fn;
 
 
 
@@ -363,6 +462,44 @@ void task2() {
 	cv::imshow("not First OpenCV Application", img);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
+
+}
+
+void task4(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Segmented Outputs\\mIMD002.bmp") {
+
+	cv::Mat img = cv::imread(path);
+
+	SLinkedList<int> rlc;
+	int curr = 0, prev = 0;
+
+	rlc.insert(img.rows);
+	rlc.insert(img.cols);
+	rlc.insert(-1);
+
+	for (int i = 0; i < img.rows; i++)
+	{
+		for (int j = 0; j < img.cols; j++)
+		{
+			curr = (img.at<Vec3b>(i, j).val[0] + img.at<Vec3b>(i, j).val[1] + img.at<Vec3b>(i, j).val[2]) / 3;
+			prev = (img.at<Vec3b>(i, j - 1).val[0] + img.at<Vec3b>(i, j - 1).val[1] + img.at<Vec3b>(i, j - 1).val[2]) / 3;
+
+			if (curr == 255 && prev == 0 || curr == 0 && prev == 255) {
+
+				rlc.insert(j);
+
+			}
+
+
+
+		}
+
+		rlc.insert(-1);
+
+	}
+
+	rlc.print();
+
+
 
 }
 

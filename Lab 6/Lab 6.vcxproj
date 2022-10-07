@@ -33,7 +33,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClInclude Include="Header.h" />
+    <ClInclude Include="linked_list.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
