@@ -200,12 +200,12 @@ void task1(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester
 }
 
 
-void task2AndTask3(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Original Images\\IMD017.bmp") {
+void task2AndTask3(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Original Images\\IMD002.bmp") {
 
 
 	//NOTE: Keep the FIle name for Original Images and Ground Trusths Same for correct Value of DICE COEFFICIENT // 
 
-	string gndPath = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Ground Truths\\IMD017_lesion.bmp";
+	string gndPath = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Ground Truths\\IMD002_lesion.bmp";
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////328//144////////////////////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ void task2AndTask3(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\
 
 		}
 
-		for (int j = img.cols-1; j > 0 ; j--)
+		for (int j = img.cols - 1; j > 0; j--)
 		{
 			int curr1 = (img.at<Vec3b>(i, j).val[0] + img.at<Vec3b>(i, j).val[1] + img.at<Vec3b>(i, j).val[2]) / 3;
 			int prev1 = (img.at<Vec3b>(i, j - 1).val[0]);
@@ -369,19 +369,19 @@ void task2AndTask3(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\
 				break;
 
 			}
-			
-
-
-
 
 		}
 
 	}
 
-	cout << jst << "  " << jEnd;
 
 	for (int i = 0; i < img.rows; i++)
 	{
+
+		if (img.at<Vec3b>(i, 0).val[0] == 0 || img.at<Vec3b>(i, img.cols - 1).val[0] == 0)
+		{
+			continue;
+		}
 		for (int j = 0; j <= jst; j++)
 		{
 
@@ -393,7 +393,7 @@ void task2AndTask3(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\
 
 		}
 
-		for (int j = jEnd; j <img.cols ; j++)
+		for (int j = jEnd; j < img.cols; j++)
 		{
 
 
@@ -465,12 +465,12 @@ void task2AndTask3(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\
 
 }
 
-void task4(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Segmented Outputs\\mIMD002.bmp") {
+void task4(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester 3\\Data st\\Assignment 1\\Assignment 1\\Segmented Outputs\\mIMD024.bmp") {
 
 	cv::Mat img = cv::imread(path);
 
 	SLinkedList<int> rlc;
-	int curr = 0, prev = 0;
+	int curr = 0, prev = 0, next = 0;
 
 	rlc.insert(img.rows);
 	rlc.insert(img.cols);
@@ -482,12 +482,19 @@ void task4(string path = "C:\\Users\\msasd\\OneDrive\\Desktop\\Vs Code\\Semester
 		{
 			curr = (img.at<Vec3b>(i, j).val[0] + img.at<Vec3b>(i, j).val[1] + img.at<Vec3b>(i, j).val[2]) / 3;
 			prev = (img.at<Vec3b>(i, j - 1).val[0] + img.at<Vec3b>(i, j - 1).val[1] + img.at<Vec3b>(i, j - 1).val[2]) / 3;
+			next = (img.at<Vec3b>(i, j + 1).val[0] + img.at<Vec3b>(i, j + 1).val[1] + img.at<Vec3b>(i, j + 1).val[2]) / 3;
 
-			if (curr == 255 && prev == 0 || curr == 0 && prev == 255) {
+			if (curr == 255 && prev == 0 ) {
 
 				rlc.insert(j);
 
+				
 			}
+			if ( curr == 0 && prev == 255) {
+				rlc.insert(j-1);
+
+			}
+
 
 
 
